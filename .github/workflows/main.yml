@@ -73,9 +73,20 @@ jobs:
             --query 'taskDefinition' \
             --output json > taskdef.json
 
+          # Remove read-only attributes that do not fit in update image
+          jq 'del(
+            .taskDefinitionArn,
+            .revision,
+            .status,
+            .requiresAttributes,
+            .compatibilities,
+            .registeredAt,
+            .registeredBy
+          )' taskdef.json > cleaned-taskdef.json
+
           echo "🔧 Updating container image..."
           NEW_IMAGE="$ECR_REPOSITORY:$IMAGE_TAG"
-          jq --arg IMAGE "$NEW_IMAGE" '.containerDefinitions[0].image = $IMAGE' taskdef.json > new-taskdef.json
+          jq --arg IMAGE "$NEW_IMAGE" '.containerDefinitions[0].image = $IMAGE' cleaned-taskdef.json > new-taskdef.json
 
           echo "🚀 Registering new task definition revision..."
           NEW_TASK_DEF=$(aws ecs register-task-definition \
