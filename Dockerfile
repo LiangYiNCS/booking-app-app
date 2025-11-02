@@ -8,10 +8,10 @@ WORKDIR /app
 COPY . .
 
 # Build the JAR (if using Maven)
-RUN chmod +x mvnw && ./mvnw package -DskipTests
+RUN chmod +x mvnw && ./mvnw package -DskipTests && mv target/*.jar app.jar
 
 # Expose port (Spring Boot default)
 EXPOSE 8080
 
 # Run the app
-CMD ["java", "-jar", "target/booking-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
