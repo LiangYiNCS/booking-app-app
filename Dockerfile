@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Build the JAR (if using Maven)
-RUN ./mvnw package -DskipTests
+RUN chmod +x mvnw && ./mvnw package -DskipTests
 
 # Expose port (Spring Boot default)
 EXPOSE 8080
